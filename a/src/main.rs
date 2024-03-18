@@ -10,7 +10,8 @@ async fn main_async() {
     unsafe {
         let lib = libloading::Library::new(&lib_path).unwrap();
         let init: libloading::Symbol<unsafe fn() -> Box<Pin<Box<dyn Future<Output = AddMachine>>>>> = lib.get(b"init").unwrap();
-        let adder = init().await;
+        let add_machine = init().await;
+        let adder: Box<dyn Adder> = Box::new(add_machine);
         println!("{}", adder.add(1, 1).await);
     }
 }
