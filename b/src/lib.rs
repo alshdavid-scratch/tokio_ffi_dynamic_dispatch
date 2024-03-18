@@ -1,13 +1,16 @@
 use std::{future::Future, pin::Pin};
+use c::Adder;
 
 #[no_mangle]
-pub extern fn add(left: usize, right: usize) -> Box<Pin<Box<dyn Future<Output = usize>>>> {
+pub extern fn init() -> Box<Pin<Box<dyn Future<Output = Adder>>>> {
     return Box::new(Box::pin(async move {
         tokio::runtime::Builder::new_multi_thread()
             .enable_all()
             .build()
             .unwrap()
-            .block_on(add_async(left, right))
+            .block_on(async {
+                Adder{}
+            })
     }))
 }
 

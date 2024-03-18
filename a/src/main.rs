@@ -1,4 +1,5 @@
 use std::{future::Future, pin::Pin};
+use c::Adder;
 
 async fn main_async() {
     let exe_path = std::env::current_exe().unwrap();
@@ -7,8 +8,9 @@ async fn main_async() {
 
     unsafe {
         let lib = libloading::Library::new(&lib_path).unwrap();
-        let add_fn: libloading::Symbol<unsafe fn(usize, usize) -> Box<Pin<Box<dyn Future<Output = usize>>>>> = lib.get(b"add").unwrap();
-        println!("{}", add_fn(1, 1).await);
+        let init: libloading::Symbol<unsafe fn() -> Box<Pin<Box<dyn Future<Output = Adder>>>>> = lib.get(b"init").unwrap();
+        let adder = init().await;
+        println!("{}", adder.add(1, 1).await);
     }
 }
 

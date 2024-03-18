@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 tokio = { version = "1.36.0", features = ["full"] }
 libloading = "0.8.3"
+c = { path = "../c" }
