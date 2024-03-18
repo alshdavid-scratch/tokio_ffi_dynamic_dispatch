@@ -1,21 +1,18 @@
 use std::{future::Future, pin::Pin};
 use c::Adder;
+use c::AddMachine;
 
 #[no_mangle]
-pub extern fn init() -> Box<Pin<Box<dyn Future<Output = Adder>>>> {
+pub extern fn init() -> Box<Pin<Box<dyn Future<Output = Box<dyn Adder>>>>> {
     return Box::new(Box::pin(async move {
         tokio::runtime::Builder::new_multi_thread()
             .enable_all()
             .build()
             .unwrap()
             .block_on(async {
-                Adder{}
+                let adder: Box<dyn Adder> = Box::new(AddMachine{});
+                adder
             })
     }))
 }
 
-async fn add_async(left: usize, right: usize) -> usize {
-    tokio::task::spawn(async move {
-        left + right
-    }).await.unwrap()
-}

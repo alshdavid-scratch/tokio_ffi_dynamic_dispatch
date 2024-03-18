@@ -11,3 +11,4 @@ crate-type = ["dylib"]
 [dependencies]
 tokio = { version = "1.36.0", features = ["full"] }
 c = { path = "../c" }
+async-trait = "0.1.77"
