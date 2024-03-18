@@ -1,17 +1,17 @@
-use async_trait::async_trait;
+use std::{future::Future, pin::Pin};
 
-#[async_trait]
 pub trait Adder {
-    async fn add(&self, a: usize, b: usize) -> usize;
+    fn add(&self, a: usize, b: usize) -> Box<Pin<Box<dyn Future<Output = usize>>>>;
 }
 
 pub struct AddMachine {}
 
-#[async_trait]
 impl Adder for AddMachine {
-    async fn add(&self, a: usize, b: usize) -> usize {
-        tokio::task::spawn(async move {
-            return a + b + a
-        }).await.unwrap()
+    fn add(&self, a: usize, b: usize) -> Box<Pin<Box<dyn Future<Output = usize>>>> {
+        Box::new(Box::pin(async move {
+            tokio::task::spawn(async move {
+                return a + b + a
+            }).await.unwrap()
+        }))
     }
 }
